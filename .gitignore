@@ -1,0 +1,9 @@
+# Object files
+*.o
+# Executable from this project
+subtract
+test
+
+# Image files
+*.bmp
+*.xcf
