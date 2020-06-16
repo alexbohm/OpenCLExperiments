@@ -27,7 +27,7 @@ Image::Image(cl::Context& context, std::string filename) {
     // file.read((char*)pixels, width * height * 3);
 
     Magick::Image image(filename);
-    
+
     width = image.columns();
     height = image.rows();
     pixels = new unsigned char[width * height * 3];
@@ -73,7 +73,9 @@ void Image::enqueueRead(cl::CommandQueue& queue){
 void Image::save(std::string filename){
     std::cout << "Saving to file: " << filename << std::endl;
     
-    Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
+    Magick::Image image(Magick::Geometry(width, height));
+    image.magick("RGB");
+    image.readPixels(Magick::RGBQuantum, pixels);
     image.write(filename);
 
 }
