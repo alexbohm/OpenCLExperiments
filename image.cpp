@@ -8,29 +8,34 @@
 Image::Image(cl::Context& context, std::string filename) {
     std::cout << "Opening Image " << filename << std::endl;
 
-    std::ifstream file;
+    // std::ifstream file;
     
-    file.open(filename, std::ios::in | std::ios::binary);
-    if(!file.is_open()) {
-        std::cout << "Error opening image " << filename << std::endl;
-        return;
-    }
-    // Allocate and read the BMP header
-    unsigned char BMPheader[54];
-    file.read((char*)BMPheader, 54);
-    // Extract the BMP header
-    width = *(int*)&BMPheader[18]; // get address of width, cast it to an int and then dereference it
-    height = *(int*)&BMPheader[22];
+    // file.open(filename, std::ios::in | std::ios::binary);
+    // if(!file.is_open()) {
+    //     std::cout << "Error opening image " << filename << std::endl;
+    //     return;
+    // }
+    // // Allocate and read the BMP header
+    // unsigned char BMPheader[54];
+    // file.read((char*)BMPheader, 54);
+    // // Extract the BMP header
+    // width = *(int*)&BMPheader[18]; // get address of width, cast it to an int and then dereference it
+    // height = *(int*)&BMPheader[22];
     
-    // Read the pixels into memory
+    // // Read the pixels into memory
+    // pixels = new unsigned char[width * height * 3];
+    // file.read((char*)pixels, width * height * 3);
+
+    Magick::Image image(filename);
+    
+    width = image.columns();
+    height = image.rows();
     pixels = new unsigned char[width * height * 3];
-    file.read((char*)pixels, width * height * 3);
 
-    //TODO: Can we leave the pixel format as BGR
-
+    image.writePixels(Magick::RGBQuantum, pixels);
     gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
 
-    file.close();
+    // file.close();
 }
 Image::Image(cl::Context& context, int w, int h) : width(w), height(h) {
     std::cout << "Allocating Image with " << width << " pixels wide and " << height << " pixels tall" << std::endl;
@@ -67,24 +72,10 @@ void Image::enqueueRead(cl::CommandQueue& queue){
 }
 void Image::save(std::string filename){
     std::cout << "Saving to file: " << filename << std::endl;
-
-    // std::ofstream file(filename, std::ios::out | std::ios::binary);
-    // if(!file.is_open()){
-    //     std::cout << "Error Saving " << filename << std::endl;
-    //     return;
-    // }
-    // // unsigned char BMPheader[54];
-    // // BMPheader[0] = 'B';
-    // // BMPheader[1] = 'M';
-    // int num;
-    // file.write("BM", 2);
-    // // TODO: this assumes that the image already aligns to 4 bytes
-    // num = width * height * 3 + 54;
-    // // TODO: this may fail if we don't have a 4 byte int
-    // file.write(reinterpret_cast<const char*>(&num),sizeof(num));
-
+    
     Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
     image.write(filename);
+
 }
 Image::~Image() {
     delete[] pixels;

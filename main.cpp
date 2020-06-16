@@ -65,9 +65,6 @@ std::string kernel_code =
         cout << "******************************" << std::endl;
         cout << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << endl;
         cout << "******************************" << std::endl;
-        for(int i = 385; i < kernel_code.length(); i++){
-            cout << kernel_code[i];
-        }
         cout << endl;
         return 1;
     } else {
@@ -111,6 +108,7 @@ std::string kernel_code =
     int C[10];
 
     output.enqueueRead(queue);
+    output.save("output.bmp");
     // queue.enqueueReadBuffer(buffer_C, CL_TRUE, 0, sizeof(int) * 10, C);
 
     // cout << "Results in C:" << endl;
