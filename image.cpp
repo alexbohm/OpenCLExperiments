@@ -34,6 +34,7 @@ Image::Image(cl::Context& context, std::string filename) {
 
     Magick::Blob blob;
     image.magick("RGB");
+    image.depth(8);
     image.write(&blob);
 
     std::memcpy(pixels, blob.data(), width * height * 3);
@@ -83,6 +84,7 @@ void Image::save(std::string filename){
     Magick::Image image;
     image.size("2592x1944");
     image.magick("RGB");
+    image.depth(8);
     image.read(blob);
     image.write(filename);
 
