@@ -50,7 +50,7 @@ std::string kernel_code =
 "    read_only image2d_t bottom,"
 "    write_only image2d_t output) {"
 "    const int2 pos = {get_global_id(0), get_global_id(1)};"
-"    float4 result = read_imagef(top,sampler, pos) - read_imagef(bottom, sampler, pos);"
+"    float4 result = read_imagef(top,sampler, pos);"
 "    write_imagef(output, pos, result);"
 "}"
 "";
@@ -72,6 +72,7 @@ std::string kernel_code =
     }
 
     Image image(context, "test_00.bmp");
+    image.save("output.result.bmp");
     Image second(context, "test_150.bmp");
     Image output(context, image.getWidth(), image.getHeight());
 
