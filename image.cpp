@@ -34,10 +34,11 @@ Image::Image(cl::Context& context, std::string filename) {
 
     image.magick("RGB");
     image.depth(8);
+    image.getPixels(0, 0, width, height);
     image.writePixels(Magick::RGBQuantum, pixels);
 
 
-    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
+    // gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
 
     // file.close();
 }
@@ -79,8 +80,9 @@ void Image::save(std::string filename){
     
     Magick::Image image;
     image.size("2592x1944");
-    image.magick("RGB");
+    image.magick("BMP");
     image.depth(8);
+    image.setPixels(0, 0, width, height);
     image.readPixels(Magick::RGBQuantum, pixels);
 
     image.write(filename);
