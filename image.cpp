@@ -32,6 +32,7 @@ Image::Image(cl::Context& context, std::string filename) {
     height = image.rows();
     pixels = new unsigned char[width * height * 3];
 
+    image.setPixels(0, 0, width, height);
     image.writePixels(Magick::RGBQuantum, pixels);
     gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
 
@@ -74,8 +75,9 @@ void Image::save(std::string filename){
     std::cout << "Saving to file: " << filename << std::endl;
     
     Magick::Image image;
-    image.resize(Magick::Geometry(width, height));
+    // image.resize(Magick::Geometry(width, height));
     image.magick("RGB");
+    image.setPixels(0, 0, width, height);
     image.readPixels(Magick::RGBQuantum, pixels);
     image.write(filename);
 
