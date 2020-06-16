@@ -30,7 +30,8 @@ less privileged user can access the GPU.
 * If you are getting information similar to the output below,
 allow the `video` group to read and write `/dev/mali0`.
 Be sure to add your user to the `video` group and re-log to refresh the user privileges.
-- ```$ ./subtract 
+```
+$ ./subtract 
 ./subtract: /usr/lib/mali-egl/libOpenCL.so.1: no version information available (required by ./subtract)
 ./subtract: /usr/lib/mali-egl/libOpenCL.so.1: no version information available (required by ./subtract)
 Found 1 Platforms:

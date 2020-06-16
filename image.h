@@ -3,8 +3,6 @@
 #include <CL/cl.hpp>
 #include <string>
 
-#include <png.h>
-
 class Image
 {
  private:
@@ -17,6 +15,7 @@ class Image
     Image(cl::Context& context, int w, int h);
     void enqueueWrite(cl::CommandQueue& queue);
     void enqueueRead(cl::CommandQueue& queue);
+    void save(std::string filename);
     int getWidth() { return width; }
     int getHeight(){ return height; }
     ~Image();

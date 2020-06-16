@@ -2,7 +2,7 @@
 
 #include <CL/cl.hpp>
 #include <iostream>
-
+#include <Magick++.h>
 #include <fstream>
 
 Image::Image(cl::Context& context, std::string filename) {
@@ -64,6 +64,27 @@ void Image::enqueueRead(cl::CommandQueue& queue){
     region[2] = 1;
 
     queue.enqueueReadImage(*gpu_image, CL_TRUE, origin, region, 0, 0, pixels);
+}
+void Image::save(std::string filename){
+    std::cout << "Saving to file: " << filename << std::endl;
+
+    // std::ofstream file(filename, std::ios::out | std::ios::binary);
+    // if(!file.is_open()){
+    //     std::cout << "Error Saving " << filename << std::endl;
+    //     return;
+    // }
+    // // unsigned char BMPheader[54];
+    // // BMPheader[0] = 'B';
+    // // BMPheader[1] = 'M';
+    // int num;
+    // file.write("BM", 2);
+    // // TODO: this assumes that the image already aligns to 4 bytes
+    // num = width * height * 3 + 54;
+    // // TODO: this may fail if we don't have a 4 byte int
+    // file.write(reinterpret_cast<const char*>(&num),sizeof(num));
+
+    Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
+    image.write(filename);
 }
 Image::~Image() {
     delete[] pixels;

@@ -2,7 +2,8 @@
 # Simple makefile for OpenCL
 CFLAGS = -std=c++11 -Wall -g
 LIBS   = -lOpenCL
-CC     = g++ $(CFLAGS) $(LIBS)
+MAGICKFLAGS = `Magick++-config --cxxflags --cppflags` `Magick++-config --ldflags --libs`
+CC     = g++ $(CFLAGS) $(LIBS) $(MAGICKFLAGS)
 
 all : subtract
 
