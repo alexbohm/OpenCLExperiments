@@ -36,6 +36,9 @@ Image::Image(cl::Context& context, std::string filename) {
     image.magick("RGB");
     image.write(&blob);
 
+    std::memcpy(pixels, blob.data(), width * height * 3);
+
+
     gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
 
     // file.close();
