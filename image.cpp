@@ -32,8 +32,10 @@ Image::Image(cl::Context& context, std::string filename) {
     height = image.rows();
     pixels = new unsigned char[width * height * 3];
 
-    image.setPixels(0, 0, width, height);
-    image.writePixels(Magick::RGBQuantum, pixels);
+    Magick::Blob blob;
+    image.magick("RGB");
+    image.write(&blob);
+
     gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
 
     // file.close();
@@ -74,11 +76,11 @@ void Image::enqueueRead(cl::CommandQueue& queue){
 void Image::save(std::string filename){
     std::cout << "Saving to file: " << filename << std::endl;
     
+    Magick::Blob blob(pixels, width * height * 3);
     Magick::Image image;
-    // image.resize(Magick::Geometry(width, height));
+    image.size("2592x1944");
     image.magick("RGB");
-    image.setPixels(0, 0, width, height);
-    image.readPixels(Magick::RGBQuantum, pixels);
+    image.read(blob);
     image.write(filename);
 
 }
