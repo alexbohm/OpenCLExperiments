@@ -106,6 +106,10 @@ std::string kernel_code =
     queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange);
 
     int C[10];
+    
+    cout << "Waiting for CommandQueue to finish...";
+    queue.finish();
+    cout << " Done" << endl;
 
     output.enqueueRead(queue);
     output.save("output.bmp");
