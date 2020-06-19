@@ -50,7 +50,7 @@ std::string kernel_code =
 "    read_only image2d_t bottom,"
 "    write_only image2d_t output) {"
 "    const int2 pos = {get_global_id(0), get_global_id(1)};"
-"    float4 result = read_imagef(top,sampler, pos) - read_imagef(bottom,sampler, pos);"
+"    float4 result = read_imagef(top,sampler, pos);"
 "    write_imagef(output, pos, result);"
 "}"
 "";
@@ -103,10 +103,11 @@ std::string kernel_code =
     subtract.setArg(0, image.getBuffer());
     subtract.setArg(1, second.getBuffer());
     subtract.setArg(2, output.getBuffer());
-    queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange);
+
+    cout << "Enqueue Kernel Status: " << queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange) << endl;
 
     int C[10];
-    
+
     cout << "Waiting for CommandQueue to finish...";
     queue.finish();
     cout << " Done" << endl;
