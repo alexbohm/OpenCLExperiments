@@ -17,6 +17,7 @@ For this project I am using the Odroid XU4/Odroid HC2.
 
 ### System Setup ###
 * Allowing users with video privileges to run OpenCL code
+    - **Note This is Temporary, Probably Needs A udev Rule**
     - The Mali GPU appears to be accessible on `/dev/mali0`. By default on
 installation only root can read and write this device. Let's change that so a
 less privileged user can access the GPU.

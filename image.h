@@ -27,5 +27,6 @@ class Image
     void save(std::string filename);
     int getWidth() { return width; }
     int getHeight(){ return height; }
+    cl::Image2D& getBuffer(){ return *gpu_image; }
     ~Image();
 };

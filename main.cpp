@@ -50,7 +50,7 @@ std::string kernel_code =
 "    read_only image2d_t bottom,"
 "    write_only image2d_t output) {"
 "    const int2 pos = {get_global_id(0), get_global_id(1)};"
-"    float4 result = read_imagef(top,sampler, pos);"
+"    float4 result = read_imagef(top,sampler, pos) - read_imagef(bottom,sampler, pos);"
 "    write_imagef(output, pos, result);"
 "}"
 "";
@@ -72,7 +72,6 @@ std::string kernel_code =
     }
 
     Image image(context, "test_00.bmp");
-    image.save("output.result.bmp");
     Image second(context, "test_150.bmp");
     Image output(context, image.getWidth(), image.getHeight());
 
@@ -101,10 +100,10 @@ std::string kernel_code =
     // queue.finish();
 
     cl::Kernel subtract(program, "image_subtract");
-    subtract.setArg(0, buffer_A);
-    subtract.setArg(1, buffer_B);
-    subtract.setArg(2, buffer_C);
-    // queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(10), cl::NullRange);
+    subtract.setArg(0, image.getBuffer());
+    subtract.setArg(1, second.getBuffer());
+    subtract.setArg(2, output.getBuffer());
+    queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange);
 
     int C[10];
 
