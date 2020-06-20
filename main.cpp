@@ -34,8 +34,8 @@ int main(int argc, char const *argv[])
     cout << "I will use: " << default_device.getInfo<CL_DEVICE_NAME>() << endl;
     cout << "This device has: " << default_device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << " memory." << endl;
     cout << "This device has these extensions: " << default_device.getInfo<CL_DEVICE_EXTENSIONS>() << endl;
-    cout << "This device has a native float vector size of: " << default_device.getInfo<CL_​DEVICE_​PREFERRED_​VECTOR_​WIDTH_FLOAT>() << endl;
-    cout << "This device has a native double vector size of: " << default_device.getInfo<CL_​DEVICE_​PREFERRED_​VECTOR_​WIDTH_DOUBLE>() << endl;
+    cout << "This device has a native float vector size of: " << default_device.getInfo<CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT>() << endl;
+    cout << "This device has a native double vector size of: " << default_device.getInfo<CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE>() << endl;
 
     cl::Context context({default_device});
 
