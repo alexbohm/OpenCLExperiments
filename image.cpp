@@ -8,24 +8,6 @@
 Image::Image(cl::Context& context, std::string filename) {
     std::cout << "Opening Image " << filename << std::endl;
 
-    // std::ifstream file;
-    
-    // file.open(filename, std::ios::in | std::ios::binary);
-    // if(!file.is_open()) {
-    //     std::cout << "Error opening image " << filename << std::endl;
-    //     return;
-    // }
-    // // Allocate and read the BMP header
-    // unsigned char BMPheader[54];
-    // file.read((char*)BMPheader, 54);
-    // // Extract the BMP header
-    // width = *(int*)&BMPheader[18]; // get address of width, cast it to an int and then dereference it
-    // height = *(int*)&BMPheader[22];
-    
-    // // Read the pixels into memory
-    // pixels = new unsigned char[width * height * 3];
-    // file.read((char*)pixels, width * height * 3);
-
     Magick::Image image(filename);
 
     width = image.columns();
@@ -41,7 +23,6 @@ Image::Image(cl::Context& context, std::string filename) {
     gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, NULL, &error);
     
     std::cout << "    Image2D Status: " << error << std::endl;
-    // file.close();
 }
 Image::Image(cl::Context& context, int w, int h) : width(w), height(h) {
     std::cout << "Allocating Image with " << width << " pixels wide and " << height << " pixels tall" << std::endl;
@@ -59,8 +40,8 @@ void Image::enqueueWrite(cl::CommandQueue& queue){
     origin[2] = 0;
 
     cl::size_t<3> region;
-    region[0] = width;
-    region[1] = height;
+    region[0] = width / 2;
+    region[1] = height / 2;
     region[2] = 1;
 
     queue.enqueueWriteImage(*gpu_image, CL_TRUE, origin, region, 0, 0, pixels);
