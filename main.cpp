@@ -104,9 +104,12 @@ std::string kernel_code =
     cl::Kernel subtract(program, "image_subtract", &error);
     cout << "Kernel Status: " << error << endl;
 
-    subtract.setArg(0, image.getBuffer());
-    subtract.setArg(1, second.getBuffer());
-    subtract.setArg(2, output.getBuffer());
+    error = subtract.setArg(0, image.getBuffer());
+    cout << "Argument 0: " << error << endl;
+    error = subtract.setArg(1, second.getBuffer());
+    cout << "Argument 1: " << error << endl;
+    error = subtract.setArg(2, output.getBuffer());
+    cout << "Argument 2: " << error << endl;
 
     cout << "Enqueue Kernel Status: " << queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange) << endl;
 
