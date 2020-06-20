@@ -99,12 +99,17 @@ std::string kernel_code =
     // queue.enqueueNDRangeKernel(simple_add, cl::NullRange, cl::NDRange(10), cl::NullRange);
     // queue.finish();
 
-    cl::Kernel subtract(program, "image_subtract");
+    int error;
+
+    cl::Kernel subtract(program, "image_subtract", &error);
+    cout << "Kernel Status: " << error << endl;
+
     subtract.setArg(0, image.getBuffer());
     subtract.setArg(1, second.getBuffer());
     subtract.setArg(2, output.getBuffer());
 
     cout << "Enqueue Kernel Status: " << queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange) << endl;
+
 
     int C[10];
 
