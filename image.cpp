@@ -38,7 +38,7 @@ Image::Image(cl::Context& context, std::string filename) {
     image.writePixels(Magick::RGBQuantum, pixels);
 
     int error;
-    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels, &error);
+    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, NULL, &error);
     
     std::cout << "    Image2D Status: " << error << std::endl;
     // file.close();
@@ -48,7 +48,7 @@ Image::Image(cl::Context& context, int w, int h) : width(w), height(h) {
     pixels = new unsigned char[width * height * 3];
 
     int error;
-    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels, &error);
+    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, NULL, &error);
 
     std::cout << "    Image2D Status: " << error << std::endl;
 }
