@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Magick++.h>
 #include <fstream>
+#include <string>
 
 Image::Image(cl::Context& context, std::string filename) {
     std::cout << "Opening Image " << filename << std::endl;
@@ -40,8 +41,8 @@ void Image::enqueueWrite(cl::CommandQueue& queue){
     origin[2] = 0;
 
     cl::size_t<3> region;
-    region[0] = width / 2;
-    region[1] = height / 2;
+    region[0] = width;
+    region[1] = height;
     region[2] = 1;
 
     queue.enqueueWriteImage(*gpu_image, CL_TRUE, origin, region, 0, 0, pixels);
@@ -63,7 +64,8 @@ void Image::save(std::string filename){
     std::cout << "Saving to file: " << filename << std::endl;
     
     Magick::Image image;
-    image.size("2592x1944");
+    // image.size("2592x1944");
+    image.size(std::to_string(width) + "x" + std::to_string(height));
     image.magick("BMP");
     image.depth(8);
     image.setPixels(0, 0, width, height);
