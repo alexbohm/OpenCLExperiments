@@ -37,17 +37,20 @@ Image::Image(cl::Context& context, std::string filename) {
     image.getPixels(0, 0, width, height);
     image.writePixels(Magick::RGBQuantum, pixels);
 
-
-    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
-
+    int error;
+    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels, &error);
+    
+    std::cout << "    Image2D Status: " << error << std::endl;
     // file.close();
 }
 Image::Image(cl::Context& context, int w, int h) : width(w), height(h) {
     std::cout << "Allocating Image with " << width << " pixels wide and " << height << " pixels tall" << std::endl;
     pixels = new unsigned char[width * height * 3];
 
-    //TODO: Can we leave the pixel format as BGR
-    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels);
+    int error;
+    gpu_image = new cl::Image2D(context, CL_MEM_READ_WRITE, cl::ImageFormat(CL_RGB, CL_UNORM_INT8), width, height, 0, pixels, &error);
+
+    std::cout << "    Image2D Status: " << error << std::endl;
 }
 void Image::enqueueWrite(cl::CommandQueue& queue){
     cl::size_t<3> origin;
