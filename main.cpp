@@ -12,7 +12,7 @@ using std::endl;
 int main(int argc, char const *argv[])
 {
     if(argc < 3){
-        cout << "Usage: " << argv[0] << " <top1> <top2>" << endl;
+        cout << "Usage: " << argv[0] << " <image1> <image2>" << endl;
         return 1;
     }
     std::vector<cl::Platform> all_cl_platforms;
@@ -47,13 +47,13 @@ int main(int argc, char const *argv[])
 
     std::string kernel_code =
 "const sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;"
-"void kernel top_subtract("
-"    read_only top2d_t top,"
-"    read_only top2d_t bottom,"
-"    write_only top2d_t output) {"
+"void kernel image_subtract("
+"    read_only image2d_t top,"
+"    read_only image2d_t bottom,"
+"    write_only image2d_t output) {"
 "    const int2 pos = {get_global_id(0), get_global_id(1)};"
-"    float4 result = read_topf(top, sampler, pos) - read_topf(bottom, sampler, pos);"
-"    write_topf(output, pos, result);"
+"    float4 result = read_imagef(top, sampler, pos) - read_imagef(bottom, sampler, pos);"
+"    write_imagef(output, pos, result);"
 "}"
 "";
 
@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
 
     int error;
 
-    cl::Kernel subtract(program, "top_subtract", &error);
+    cl::Kernel subtract(program, "image_subtract", &error);
     cout << "Kernel Status: " << error << endl;
 
     error = subtract.setArg(0, top.getBuffer());
