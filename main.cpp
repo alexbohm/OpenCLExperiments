@@ -11,6 +11,10 @@ using std::endl;
 
 int main(int argc, char const *argv[])
 {
+    if(argc < 3){
+        cout << "Usage: " << argv[0] << " <image1> <image2>" << endl;
+        return 1;
+    }
     std::vector<cl::Platform> all_cl_platforms;
     cl::Platform::get(&all_cl_platforms);
     cout << "Found " << all_cl_platforms.size() << " Platforms:" << endl;
@@ -41,12 +45,7 @@ int main(int argc, char const *argv[])
 
     cl::Program::Sources sources;
 
-    // std::string kernel_code =
-    //         "   void kernel simple_add(global const int* A, global const int* B, global int* C){       "
-    //         "       C[get_global_id(0)]=A[get_global_id(0)]+B[get_global_id(0)];                 "
-    //         "   }                                                                               ";
-
-std::string kernel_code =
+    std::string kernel_code =
 "const sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_NEAREST;"
 "void kernel image_subtract("
 "    read_only image2d_t top,"
@@ -57,7 +56,6 @@ std::string kernel_code =
 "    write_imagef(output, pos, result);"
 "}"
 "";
-
 
     sources.push_back({kernel_code.c_str(), kernel_code.length()});
 
@@ -74,63 +72,36 @@ std::string kernel_code =
         cout << "Successfully built code" << endl;
     }
 
-    Image image(context, "test_00.bmp");
-    Image second(context, "test_150.bmp");
-    Image output(context, image.getWidth(), image.getHeight());
-
-    cl::Buffer buffer_A(context, CL_MEM_READ_WRITE, sizeof(int) * 10);
-    cl::Buffer buffer_B(context, CL_MEM_READ_WRITE, sizeof(int) * 10);
-    cl::Buffer buffer_C(context, CL_MEM_READ_WRITE, sizeof(int) * 10);
-
-    int A[] = {0,1,2,3,4,5,6,7,8,9};
-    int B[] = {0,1,2,3,4,5,6,7,8,60};
+    Image top(context, argv[1]);
+    Image bottom(context, argv[2]);
+    Image output(context, top.getWidth(), top.getHeight());
 
     cl::CommandQueue queue(context, default_device);
-
-    queue.enqueueWriteBuffer(buffer_A, CL_TRUE, 0, sizeof(int) * 10, A);
-    queue.enqueueWriteBuffer(buffer_B, CL_TRUE, 0, sizeof(int) * 10, B);
     
-    image.enqueueWrite(queue);
-    second.enqueueWrite(queue);
-
-    // cl::KernelFunctor simple_add(cl::Kernel(program,"simple_add"),queue,cl::NullRange,cl::NDRange(10),cl::NullRange);
-    // Replaced functor with:
-    // cl::Kernel simple_add(program, "simple_add");
-    // simple_add.setArg(0, buffer_A);
-    // simple_add.setArg(1, buffer_B);
-    // simple_add.setArg(2, buffer_C);
-    // queue.enqueueNDRangeKernel(simple_add, cl::NullRange, cl::NDRange(10), cl::NullRange);
-    // queue.finish();
+    top.enqueueWrite(queue);
+    bottom.enqueueWrite(queue);
 
     int error;
 
     cl::Kernel subtract(program, "image_subtract", &error);
     cout << "Kernel Status: " << error << endl;
 
-    error = subtract.setArg(0, image.getBuffer());
-    cout << "    Argument 0: " << error << endl;
-    error = subtract.setArg(1, second.getBuffer());
-    cout << "    Argument 1: " << error << endl;
+    error = subtract.setArg(0, top.getBuffer());
+    cout << "Argument 0: " << error << endl;
+    error = subtract.setArg(1, bottom.getBuffer());
+    cout << "Argument 1: " << error << endl;
+
     error = subtract.setArg(2, output.getBuffer());
     cout << "    Argument 2: " << error << endl;
 
-    cout << "Enqueue Kernel Status: " << queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(image.getWidth(), image.getHeight()), cl::NullRange) << endl;
+    cout << "Enqueue Kernel Status: " << queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(top.getWidth(), top.getHeight()), cl::NullRange) << endl;
 
-
-    int C[10];
-
-    cout << "Waiting for CommandQueue to finish...";
-    queue.finish();
-    cout << " Done" << endl;
+    // cout << "Waiting for CommandQueue to finish...";
+    // queue.finish();
+    // cout << " Done" << endl;
 
     output.enqueueRead(queue);
     output.save("output.bmp");
-    // queue.enqueueReadBuffer(buffer_C, CL_TRUE, 0, sizeof(int) * 10, C);
-
-    // cout << "Results in C:" << endl;
-    // for(int i = 0; i < 10; i++){
-    //     std::cout << C[i] << endl;
-    // }
 
     cout << "Done" << endl;
 
