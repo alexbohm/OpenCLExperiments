@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 "    read_only image2d_t bottom,"
 "    write_only image2d_t output) {"
 "    const int2 pos = {get_global_id(0), get_global_id(1)};"
-"    float4 result = read_imagef(top, sampler, pos) - read_imagef(bottom, sampler, pos);"
+"    const float4 result = read_imagef(top, sampler, pos) - read_imagef(bottom, sampler, pos);"
 "    write_imagef(output, pos, result);"
 "}"
 "";
@@ -90,8 +90,9 @@ int main(int argc, char const *argv[])
     cout << "Argument 0: " << error << endl;
     error = subtract.setArg(1, bottom.getBuffer());
     cout << "Argument 1: " << error << endl;
+
     error = subtract.setArg(2, output.getBuffer());
-    cout << "Argument 2: " << error << endl;
+    cout << "    Argument 2: " << error << endl;
 
     cout << "Enqueue Kernel Status: " << queue.enqueueNDRangeKernel(subtract, cl::NullRange, cl::NDRange(top.getWidth(), top.getHeight()), cl::NullRange) << endl;
 
